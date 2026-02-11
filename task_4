@@ -1,0 +1,69 @@
+Задача 4: Система банковских счетов (Структуры, Методы, Указатели)
+Условие: Создайте структуру Account с полями Owner (string) и Balance (float64).
+
+Реализуйте метод Deposit(amount float64), увеличивающий баланс.
+
+Реализуйте метод Withdraw(amount float64) error, который уменьшает баланс или возвращает ошибку, если средств недостаточно.
+
+Используйте указатели в методах, чтобы изменения сохранялись.
+
+Создайте структуру Bank, которая содержит карту (map), где ключ — ID счета, а значение — структура Account.
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+// Account описывает отдельный банковский счет
+type Account struct {
+	Owner   string
+	Balance float64
+}
+
+// Bank содержит коллекцию счетов, где ключ — ID (int)
+type Bank struct {
+	Accounts map[int]*Account
+}
+
+// Deposit пополняет баланс. Используем указатель (*Account), чтобы менять оригинал.
+func (acc *Account) Deposit(amount float64) {
+	if amount <= 0 {
+		return // Можно также возвращать ошибку, если сумма некорректна
+	}
+	acc.Balance += amount
+}
+
+// Withdraw возвращает встроенный тип error, если денег мало.
+func (acc *Account) Withdraw(amount float64) error {
+	if amount > acc.Balance {
+		return errors.New("недостаточно средств на счете")
+	}
+	acc.Balance -= amount
+	return nil
+}
+
+func main() {
+	// Инициализируем банк и карту внутри него
+	myBank := Bank{
+		Accounts: make(map[int]*Account),
+	}
+
+	// Создаем счет и добавляем его в карту по ID = 1
+	myBank.Accounts[1] = &Account{Owner: "Nurbolat", Balance: 500}
+
+	// Работаем со счетом через карту
+	acc := myBank.Accounts[1]
+
+	acc.Deposit(500)
+	fmt.Printf("После депозита: %.2f\n", acc.Balance)
+
+	// Правильная обработка ошибки при снятии
+	err := acc.Withdraw(1100)
+	if err != nil {
+		fmt.Printf("Ошибка: %v\n", err)
+	}
+
+	fmt.Printf("Итоговый баланс %s: %.2f\n", acc.Owner, acc.Balance)
+}
