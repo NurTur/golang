@@ -1,0 +1,75 @@
+Задача 1: Анализатор статистики чисел (Массивы, Срезы, Условные конструкции)
+Условие: Напишите функцию, которая принимает срез целых чисел. Она должна возвращать структуру со следующей информацией:
+
+Максимальное и минимальное число.
+
+Среднее арифметическое (типа float64).
+
+Сумму всех четных чисел.
+
+Срез, содержащий только уникальные числа из исходного (используйте map для фильтрации).
+
+package main
+
+import "fmt"
+
+// Определяем структуру согласно условию
+type Stats struct {
+	Max     int
+	Min     int
+	Average float64
+	SumEven int
+	Unique  []int
+}
+
+func analyzeNumbers(numbers []int) Stats {
+	if len(numbers) == 0 {
+		return Stats{}
+	}
+
+	// Инициализируем переменные значениями первого элемента
+	max, min := numbers[0], numbers[0]
+	sumAll := 0
+	sumEven := 0
+
+	uniqueMap := make(map[int]bool)
+	var uniqueSlice []int
+
+	for _, v := range numbers {
+		// Поиск Max/Min
+		if v > max {
+			max = v
+		}
+		if v < min {
+			min = v
+		}
+
+		// Сумма для среднего и сумма четных
+		sumAll += v
+		if v%2 == 0 {
+			sumEven += v
+		}
+
+		// Фильтрация уникальных через map
+		if !uniqueMap[v] {
+			uniqueMap[v] = true
+			uniqueSlice = append(uniqueSlice, v)
+		}
+	}
+
+	return Stats{
+		Max:     max,
+		Min:     min,
+		Average: float64(sumAll) / float64(len(numbers)), // Правильное деление
+		SumEven: sumEven,
+		Unique:  uniqueSlice,
+	}
+}
+
+func main() {
+	var slice = []int{5, 6, 7, -5, 7, 9, -5}
+	//slice := []int{5, 6, 7, -5, 7, 9, -5, 10}
+	result := analyzeNumbers(slice)
+
+	fmt.Printf("Результаты анализа: %+v\n", result)
+}
