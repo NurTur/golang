@@ -1,0 +1,54 @@
+Задача 3: Умный калькулятор (Тип функции, Анонимные функции)
+Условие: Создайте тип функции Operation.
+
+Реализуйте функцию Calculate, которая принимает два числа (float64) и переменную типа Operation.
+
+Вызовите Calculate, передавая в неё анонимные функции для сложения, вычитания, умножения и возведения в степень.
+
+Добавьте проверку на деление на ноль внутри анонимной функции деления.
+
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+// 1. Создаем тип функции согласно условию
+type Operation func(float64, float64) float64
+
+// 2. Функция Calculate теперь использует созданный тип
+func Calculate(a, b float64, op Operation) float64 {
+	return op(a, b)
+}
+
+func main() {
+	// Сложение
+	fmt.Printf("Сложение: %.2f\n", Calculate(5, 6, func(a, b float64) float64 {
+		return a + b
+	}))
+
+	// Вычитание
+	fmt.Printf("Вычитание: %.2f\n", Calculate(8, 6, func(a, b float64) float64 {
+		return a - b
+	}))
+
+	// Умножение
+	fmt.Printf("Умножение: %.2f\n", Calculate(5, 6, func(a, b float64) float64 {
+		return a * b
+	}))
+
+	// Возведение в степень (используем math.Pow)
+	fmt.Printf("Степень: %.2f\n", Calculate(2, 4, func(a, b float64) float64 {
+		return math.Pow(a, b)
+	}))
+
+	// Деление с проверкой на ноль
+	fmt.Printf("Деление: %.2f\n", Calculate(10, 0, func(a, b float64) float64 {
+		if b == 0 {
+			fmt.Print("Ошибка: деление на ноль! Результат: ")
+			return 0
+		}
+		return a / b
+	}))
+}
