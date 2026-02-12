@@ -1,0 +1,51 @@
+Задача 6: Организация данных (Вложенные структуры, Псевдонимы)
+Условие: - Создайте псевдоним типа ID для string.
+
+Создайте структуру Address (City, Street).
+
+Создайте структуру User (ID, Name, Address).
+
+Напишите функцию, которая принимает *User и меняет его город. Убедитесь, что вы понимаете, как обращаться к полям вложенной структуры через указатель.
+
+package main
+
+import "fmt"
+
+// ID — определение типа на базе строки
+type ID string
+
+type Address struct {
+	City   string
+	Street string
+}
+
+type User struct {
+	ID      ID
+	Name    string
+	Address // Анонимное поле (встраивание)
+}
+
+// Функция, принимающая указатель, как и требовалось
+func changeCity(u *User, newCity string) {
+	// Используем "продвижение полей" (field promotion): 
+	// нам не обязательно писать u.Address.City, можно сразу u.City
+	u.City = newCity
+}
+
+func main() {
+	// Компактная инициализация без лишних промежуточных переменных
+	user := User{
+		ID:   "123",
+		Name: "Nurbolat",
+		Address: Address{
+			City:   "Almaty",
+			Street: "Pobeda",
+		},
+	}
+
+	// Передаем адрес структуры
+	changeCity(&user, "Tashkent")
+
+	// Печатаем с флагом %+v, чтобы видеть структуру данных
+	fmt.Printf("%+v\n", user)
+}
