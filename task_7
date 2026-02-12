@@ -1,0 +1,71 @@
+Задача 7: Рекурсивный поиск в "файловой системе" (Рекурсия, Срезы)
+Условие: Представьте структуру Folder, которая содержит Name (string) и SubFolders (срез []Folder).
+
+Напишите рекурсивную функцию, которая подсчитывает общее количество папок на всех уровнях вложенности.
+
+Напишите функцию, которая выводит дерево папок с отступами (например, через fmt.Printf с форматированием).
+
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+// Folder описывает структуру папки
+type Folder struct {
+	Name       string
+	SubFolders []Folder
+}
+
+// CountFolders рекурсивно считает все папки
+func CountFolders(f Folder) int {
+	count := 1 // Считаем текущую папку
+	for _, sub := range f.SubFolders {
+		count += CountFolders(sub) // Рекурсивно прибавляем количество вложенных
+	}
+	return count
+}
+
+// PrintTree рекурсивно выводит дерево с отступами
+func PrintTree(f Folder, level int) {
+	// Создаем отступ: 2 пробела на каждый уровень вложенности
+	indent := strings.Repeat("  ", level)
+	fmt.Printf("%s- %s\n", indent, f.Name)
+
+	for _, sub := range f.SubFolders {
+		PrintTree(sub, level+1)
+	}
+}
+
+func main() {
+	// Создаем структуру "файловой системы"
+	root := Folder{
+		Name: "Root",
+		SubFolders: []Folder{
+			{
+				Name: "Movies",
+				SubFolders: []Folder{
+					{Name: "Sci-Fi", SubFolders: nil},
+					{Name: "Drama", SubFolders: nil},
+				},
+			},
+			{
+				Name: "Work",
+				SubFolders: []Folder{
+					{Name: "Projects", SubFolders: []Folder{
+						{Name: "Go-App", SubFolders: nil},
+					}},
+				},
+			},
+		},
+	}
+
+	// 1. Считаем папки
+	total := CountFolders(root)
+	fmt.Printf("Общее количество папок: %d\n\n", total)
+
+	// 2. Выводим дерево
+	fmt.Println("Дерево каталогов:")
+	PrintTree(root, 0)
+}
